@@ -4,7 +4,11 @@ project(json)
 
 set(TARGET_LIB json)
 
-add_compile_options(/std:c++14)
+if (WIN32)
+    add_compile_options(/std:c++14)
+else()
+    add_compile_options(-std=c++14)
+endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -15,9 +19,7 @@ if (NOT Boost_FOUND)
 endif()
 
 include_directories(${Boost_INCLUDE_DIRS})
-
-link_directories(D:/SDK/Boost/lib)
-
+link_directories(${Boost_LIBRARY_DIRS})
  
 file (GLOB SRC_FILE src/*.h src/*.cpp src/*.hpp)
 

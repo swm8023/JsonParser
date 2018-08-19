@@ -8,82 +8,90 @@
 
 #include <boost/spirit/home/x3.hpp>
 #include <boost/spirit/home/x3/support/ast/variant.hpp>
-
 #include <boost/fusion/include/adapt_struct.hpp>
 #include <boost/fusion/include/std_pair.hpp>
 #include <boost/fusion/include/io.hpp>
 
-
 namespace json {
-
     namespace x3 = boost::spirit::x3;
+
     namespace ast {
-        struct value;
+        struct Value;
 
-        struct null_t {};
-
-        using object = std::map<std::string, value>;
-        using array = std::vector<value>;
+        struct Null {};
+        using Object = std::map<std::string, Value>;
+        using Array = std::vector<Value>;
         
-        using object_member = std::pair<std::string, value>;
+        using ObjectMember = std::pair<std::string, Value>;
 
-        struct value : x3::variant<std::string, object, array> {
+        struct Value : x3::variant<Null, bool, int, double, std::string, Object, Array> {
             using base_type::base_type;
             using base_type::operator=;
         };
 
-        int const tabsize = 4;
+        struct Printer {
+            Printer(int tab_num) : tab(tab_num) {}
 
-        struct value_printer
-        {
-            typedef void result_type;
-
-            value_printer(int indent = 0) : indent(indent) {}
-
-            void operator()(object const& cont) const
-            {
+            void operator()(Object const& v) const {
                 std::cout << '{' << std::endl;
-                for (auto const& entry : cont)
-                {
-                    tab(indent+tabsize);
-                    std::cout << '"' << entry.first << "\" = ";
-                    boost::apply_visitor(value_printer(indent+tabsize), entry.second);
+                for (auto const& item : v) {
+                    std::cout << tabstr(tab + 1) << '"' << item.first << "\" : ";
+                    boost::apply_visitor(Printer(tab + 1), item.second);
                 }
-                tab(indent);
-                std::cout << '}' << std::endl;
+                std::cout << tabstr(tab) << '}' << std::endl;
             }
 
-            void operator()(std::string const& text) const
-            {
-                std::cout << '"' << text << '"' << std::endl;
+            void operator()(Array const& v) const {
+                std::cout << '[' << std::endl;
+                for (auto const& item : v) {
+                    std::cout << tabstr(tab + 1);
+                    boost::apply_visitor(Printer(tab + 1), item);
+                }
+                std::cout << tabstr(tab) << ']' << std::endl;
             }
 
-            void tab(int spaces) const
-            {
-                for (int i = 0; i < spaces; ++i)
-                    std::cout << ' ';
+            void operator()(Null const& v) const {
+                std::cout << "null" << std::endl;
             }
 
-            int indent;
+            void operator()(std::string const& v) const {
+                std::cout << '"' << v << '"' << std::endl;
+            }
+
+            void operator()(bool const& v) const {
+                std::cout << (v ? "true" : "false") << std::endl;
+            }
+
+            template<typename T>
+            void operator()(T const& v) const {
+                std::cout << v << std::endl;
+            }
+
+            std::string tabstr(int i, int tab_sz = 4) const {
+                return std::string(i * tab_sz, ' ');
+            }
+            int tab = 0;
+            
         };
+
     }
-
+    
     namespace grammer {
-        struct value_class;
-        struct object_class;
-        struct array_class;
-        struct object_member_class;
+        x3::rule<struct ValueClass, ast::Value> const value{"value"};
+        x3::rule<struct ObjectClass, ast::Object> const object{"object"};
+        x3::rule<struct ArrayClass, ast::Array> const array{"array"};
+        x3::rule<struct ObjectMemberClass, ast::ObjectMember> const object_member{"object_member"};
 
-        x3::rule<value_class, ast::value> const value{"value"};
-        x3::rule<object_class, ast::object> const object{"object"};
-        x3::rule<array_class, ast::array> const array{"array"};
-        x3::rule<object_member_class, ast::object_member> const object_member{"object_member"};
+        x3::ascii::bool_type const bool_value; 
+
+        auto const null_value = 
+            x3::lit("null") >> x3::attr(ast::Null{});
 
         auto const quote_string = 
             x3::lexeme['"' >> *(x3::char_ - '"') >> '"'];
 
         auto const value_def = 
-            quote_string | object | array;
+            null_value | bool_value | x3::int_ | x3::double_ | quote_string | object | array;
 
         auto const object_member_def = 
             quote_string >> ':' >> value;
@@ -98,7 +106,5 @@ namespace json {
     }
 
 }
-
-
 
 #endif // _JSON_PARSER_HPP
