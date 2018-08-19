@@ -4,7 +4,7 @@
 #include <boost/spirit/home/x3.hpp>
 
 std::string json_str = R"({
-    "a": "bb"
+    "a": "bb" 
 })"; 
 
 int main(int argc, char *argv[]) {
