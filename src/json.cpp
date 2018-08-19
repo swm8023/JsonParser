@@ -30,21 +30,28 @@ std::string json_str = R"(
 )";
 
 
+#include "json.hpp"
 
 int main(int argc, char *argv[]) {
-    namespace x3 = boost::spirit::x3;
-    using json::grammer::value;
-    json::ast::Value root;
-    auto iter = json_str.begin();
-    auto end = json_str.end();
-    using boost::spirit::x3::ascii::space;
-    bool r = x3::phrase_parse(iter, end, value, space, root);
-    if (r && iter == end) {
-        std::cout << "Parse Success!!!" << std::endl;
-        boost::apply_visitor(json::ast::Printer(0), root);
-    } else {
-        std::cout << "Failed!!!" << std::endl;
-    }
+    // namespace x3 = boost::spirit::x3;
+    // using json::grammer::value;
+    // json::ast::Value root;
+    // auto iter = json_str.begin();
+    // auto end = json_str.end();
+    // using boost::spirit::x3::ascii::space;
+    // bool r = x3::phrase_parse(iter, end, value, space, root);
+    // if (r && iter == end) {
+    //     std::cout << "Parse Success!!!" << std::endl;
+    //     boost::apply_visitor(json::ast::Printer(0), root);
+    // } else {
+    //     std::cout << "Failed!!!" << std::endl;
+    // }
+
+    using namespace json;
+    // Value v1 = 12;
+    // std::cout << v1.Size() << std::endl;
+    // Value v2 = {1, 2}
+    // std::cout << v2.Size() << std::endl;
    
 } 
 

@@ -5,9 +5,9 @@ project(json)
 set(TARGET_LIB json)
 
 if (WIN32)
-    add_compile_options(/std:c++14)
+    add_compile_options(/std:c++17)
 else()
-    add_compile_options(-std=c++14)
+    add_compile_options(-std=c++17)
 endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
