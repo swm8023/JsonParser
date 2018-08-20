@@ -124,18 +124,10 @@ namespace json {
             return iter->second;
         }
 
-        // Value const& operator[](char const* s) const {
-        //     return (*this)[std::string(s)];
-        // }
-
         Value& operator[](std::string const& s) {
             auto &obj = std::get<object_t>(val);
             return obj[s];
         }
-
-        // Value& operator[](char const* s) {
-        //     return (*this)[std::string(s)];
-        // }
 
         void Remove(std::string const& s) {
             auto &obj = std::get<object_t>(val);

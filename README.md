@@ -1,4 +1,6 @@
-A Json Parser Based on C++17 and Boost.Spirit X3
+A Simple Json Library support both construct and parse json.
+Need C++17. 
+Both Boost.Spirit X3 parser and text parser avaiable.
 
 ### 1. Construct Json
 ```c++
