@@ -1,5 +1,5 @@
-A Simple Json Library support both construct and parse json.
-Need C++17. 
+A Simple Json Library support both construct and parse json.  
+Need C++17.   
 Both Boost.Spirit X3 parser and text parser avaiable.
 
 ### 1. Construct Json
