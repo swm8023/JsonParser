@@ -18,7 +18,6 @@ link_directories(${Boost_LIBRARY_DIRS})
  
 
 include_directories(include)
-file (GLOB SRC_FILE src/*.h src/*.cpp src/*.hpp)
 
 # test parser
 set(TGT_TEST_PARSER test_parser)
@@ -30,5 +29,7 @@ add_executable(${TGT_TEST_JSON} test/test_json.cpp)
 set(TGT_TEST_VALUE test_value)
 add_executable(${TGT_TEST_VALUE} test/test_value.cpp)
 
+FILE(GLOB src_files include/*)
+INSTALL(FILES ${src_files} DESTINATION include/json)
 
 

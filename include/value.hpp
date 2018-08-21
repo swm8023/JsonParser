@@ -1,6 +1,7 @@
 #ifndef _JSON_VALUE_HPP
 #define _JSON_VALUE_HPP
 
+#include <string>
 #include <iostream>
 #include <map>
 #include <vector>
