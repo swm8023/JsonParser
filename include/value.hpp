@@ -130,13 +130,72 @@ namespace json {
             return obj[s];
         }
 
+        Value const& operator[](const char *s) const {
+            return (*this)[std::string(s)];
+        }
+
+        Value& operator[](const char *s) {
+            return (*this)[std::string(s)];
+        }
+
         void Remove(std::string const& s) {
             auto &obj = std::get<object_t>(val);
             auto iter = obj.find(s);
             if (iter != obj.end()) obj.erase(iter);
         }
 
-        // 
+        // Getter with No expection
+        bool GetValSafety(double &t) {
+            try {
+                t = std::get<double>(val);
+            } catch(const std::exception& e) {
+                if (Type() == ValueType::TYPE_INT) {
+                    t = (double)std::get<int>(val);
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        } 
+
+        template<typename T>
+        bool GetValSafety(std::vector<T> &vec) {
+            if (Type() != ValueType::TYPE_ARRAY) {
+                return false;
+            }
+            auto &arr = std::get<array_t>(val);
+            for (auto &item : arr) {
+                T v;
+                if (!item.GetValSafety(v)) {
+                    vec.clear();
+                    return false;
+                }
+                vec.push_back(v);
+            }
+            return true;
+        }
+
+        template<typename T>
+        bool GetValSafety(T &t) {
+            try {
+                t = std::get<T>(val);
+            } catch(const std::exception& e) {
+                return false;
+            }
+            return true;
+        }
+
+        template<typename T, typename FirstArg, typename... Args>
+        bool GetValSafety(T &t, FirstArg const& first_arg, Args const&... other_args) {
+            try {
+                Value &v = (*this)[first_arg];
+                return v.GetValSafety(t, other_args...);
+            } catch(const std::exception& e) {
+                return false;
+            }  
+        }
+
+        // get original variant
         var_t const& get() const {
             return val;
         }
