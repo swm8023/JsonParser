@@ -26,7 +26,7 @@ namespace json { namespace parser {
         
         using ObjectMember = std::pair<std::string, Value>;
 
-        struct Value : x3::variant<Null, bool, double, int,  std::string, Object, Array> {
+        struct Value : x3::variant<Null, bool, int, double, std::string, Object, Array> {
             using base_type::base_type;
             using base_type::operator=;
         };
@@ -47,7 +47,7 @@ namespace json { namespace parser {
             x3::lexeme['"' >> *(x3::char_ - '"') >> '"'];
 
         auto const value_def = 
-            null_value | bool_value | x3::double_ | x3::int_ | quote_string | object | array;
+            null_value | bool_value | x3::lexeme[x3::int_ >> !x3::char_(".eE")] | x3::double_ | quote_string | object | array;
 
         auto const object_member_def = 
             quote_string >> ':' >> value;

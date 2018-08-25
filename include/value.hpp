@@ -148,7 +148,7 @@ namespace json {
         bool GetValSafety(double &t) {
             try {
                 t = std::get<double>(val);
-            } catch(const std::exception& e) {
+            } catch(...) {
                 if (Type() == ValueType::TYPE_INT) {
                     t = (double)std::get<int>(val);
                     return true;
@@ -179,7 +179,7 @@ namespace json {
         bool GetValSafety(T &t) {
             try {
                 t = std::get<T>(val);
-            } catch(const std::exception& e) {
+            } catch(...) {
                 return false;
             }
             return true;
@@ -190,7 +190,7 @@ namespace json {
             try {
                 Value &v = (*this)[first_arg];
                 return v.GetValSafety(t, other_args...);
-            } catch(const std::exception& e) {
+            } catch(...) {
                 return false;
             }  
         }
