@@ -96,7 +96,7 @@ namespace json { namespace parser {
     };
 
 
-    bool Parse(std::string const& str, Value& value) {
+    inline bool Parse(std::string const& str, Value& value) {
         ast::Value root;
         auto iter = str.begin();
         auto end = str.end();
