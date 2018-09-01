@@ -32,7 +32,7 @@ namespace json {
         TYPE_OBJECT,
         TYPE_ARRAY,
     };
-
+    
     class Value {
     public:
         using var_t = std::variant<null_t, bool_t, int_t, string_t, double_t, object_t, array_t>;
@@ -211,50 +211,54 @@ namespace json {
 
     // Printer
     struct Printer {
-        Printer(std::ostream& os, int tab_num=0, bool is_last=true) : 
-            os(os), tab(tab_num), is_last(is_last) {}
+        Printer(std::ostream& os, int tab_num=0, bool is_last=true, bool format=true) :
+            os(os), tab(tab_num), is_last(is_last), format(format) {}
 
         void operator()(object_t const& v) const {
-            os << '{' << std::endl;
+            os << '{' << end();
             int idx = 0;
             for (auto const& item : v) {
                 idx += 1;
                 os << tabstr(tab + 1) << '"' << item.first << "\" : ";
-                std::visit(Printer(os, tab + 1, idx == v.size()), item.second.get());
+                std::visit(Printer(os, tab + 1, idx == v.size(), format), item.second.get());
             }
-            os << tabstr(tab) << '}' << laststr() << std::endl;
+            os << tabstr(tab) << '}' << laststr() << end();
         }
 
         void operator()(array_t const& v) const {
-            os << '[' << std::endl;
+            os << '[' << end();
             int idx = 0;
             for (auto const& item : v) {
                 idx += 1;
                 os << tabstr(tab + 1);
-                std::visit(Printer(os, tab + 1, idx == v.size()), item.get());
+                std::visit(Printer(os, tab + 1, idx == v.size(), format), item.get());
             }
-            os << tabstr(tab) << ']' << laststr() << std::endl;
+            os << tabstr(tab) << ']' << laststr() << end();
         }
 
         void operator()(null_t const& v) const {
-            os << "null" << laststr() << std::endl;
+            os << "null" << laststr() << end();
         }
 
         void operator()(string_t const& v) const {
-            os << '"' << v << '"' << laststr() << std::endl;
+            os << '"' << v << '"' << laststr() << end();
         }
 
         void operator()(bool_t const& v) const {
-            os << (v ? "true" : "false") << laststr() << std::endl;
+            os << (v ? "true" : "false") << laststr() << end();
         }
 
         template<typename T>
         void operator()(T const& v) const {
-            os << v << laststr() << std::endl;
+            os << v << laststr() << end();
         }
 
         std::string tabstr(int i, int tab_sz = 4) const {
-            return std::string(i * tab_sz, ' ');
+            return format ? std::string(i * tab_sz, ' ') : "";
+        }
+        
+        std::string end() const {
+            return format ? "\n" : "";
         }
 
         std::string laststr() const {
@@ -263,6 +267,7 @@ namespace json {
         int tab = 0;
         std::ostream &os;
         bool is_last;
+        bool format;
     };
 
     inline std::ostream & operator<<(std::ostream &os, Value const& v){
