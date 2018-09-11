@@ -174,6 +174,11 @@ namespace json {
             }
             return true;
         }
+        
+        bool GetValSafety(array_t &vec) {
+            vec = std::get<array_t>(val);
+            return true;
+        }
 
         template<typename T>
         bool GetValSafety(T &t) {
