@@ -145,7 +145,7 @@ namespace json {
         }
 
         // Getter with No expection
-        bool GetValSafety(double &t) {
+        bool GetValSafety(double &t) const {
             try {
                 t = std::get<double>(val);
             } catch(...) {
@@ -156,10 +156,17 @@ namespace json {
                 return false;
             }
             return false;
-        } 
+        }
+
+        bool GetValSafety(float &t) const {
+            double v;
+            bool ret = GetValSafety(v);
+            t = static_cast<float>(v);
+            return ret;
+        }  
 
         template<typename T>
-        bool GetValSafety(std::vector<T> &vec) {
+        bool GetValSafety(std::vector<T> &vec) const {
             if (Type() != ValueType::TYPE_ARRAY) {
                 return false;
             }
@@ -175,13 +182,13 @@ namespace json {
             return true;
         }
         
-        bool GetValSafety(array_t &vec) {
+        bool GetValSafety(array_t &vec) const {
             vec = std::get<array_t>(val);
             return true;
         }
 
         template<typename T>
-        bool GetValSafety(T &t) {
+        bool GetValSafety(T &t) const {
             try {
                 t = std::get<T>(val);
             } catch(...) {
@@ -191,9 +198,9 @@ namespace json {
         }
 
         template<typename T, typename FirstArg, typename... Args>
-        bool GetValSafety(T &t, FirstArg const& first_arg, Args const&... other_args) {
+        bool GetValSafety(T &t, FirstArg const& first_arg, Args const&... other_args) const {
             try {
-                Value &v = (*this)[first_arg];
+                Value const& v = (*this)[first_arg];
                 return v.GetValSafety(t, other_args...);
             } catch(...) {
                 return false;
