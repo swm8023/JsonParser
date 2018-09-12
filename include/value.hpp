@@ -155,7 +155,7 @@ namespace json {
                 }
                 return false;
             }
-            return false;
+            return true;
         }
 
         bool GetValSafety(float &t) const {
