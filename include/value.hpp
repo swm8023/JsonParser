@@ -74,7 +74,7 @@ namespace json {
         }
 
         // Functions
-        size_t Size() {
+        size_t Size() const{
             return std::visit(overloaded{
                 [](auto const &arg) -> size_t {return 0;},
                 [](object_t const &arg) -> size_t {return arg.size();},
@@ -82,15 +82,15 @@ namespace json {
             }, val);
         }
 
-        ValueType Type() {
+        ValueType Type() const{
             return std::visit(overloaded{
-                [](null_t &)   {return ValueType::TYPE_NONE; },
-                [](bool_t &)   {return ValueType::TYPE_BOOL; },
-                [](int_t &)    {return ValueType::TYPE_INT; },
-                [](string_t &) {return ValueType::TYPE_STRING; },
-                [](double_t &) {return ValueType::TYPE_DOUBLE; },
-                [](object_t &) {return ValueType::TYPE_OBJECT; },
-                [](array_t &)  {return ValueType::TYPE_ARRAY; }
+                [](null_t const&)   {return ValueType::TYPE_NONE; },
+                [](bool_t const&)   {return ValueType::TYPE_BOOL; },
+                [](int_t const&)    {return ValueType::TYPE_INT; },
+                [](string_t const&) {return ValueType::TYPE_STRING; },
+                [](double_t const&) {return ValueType::TYPE_DOUBLE; },
+                [](object_t const&) {return ValueType::TYPE_OBJECT; },
+                [](array_t const&)  {return ValueType::TYPE_ARRAY; }
             }, val);
         }
 
