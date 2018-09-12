@@ -276,8 +276,9 @@ namespace json {
         std::string laststr() const {
             return std::string(is_last ? "": "," );
         }
-        int tab = 0;
+
         std::ostream &os;
+        int tab;
         bool is_last;
         bool format;
     };
