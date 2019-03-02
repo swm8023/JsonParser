@@ -7,15 +7,23 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(Boost REQUIRED)
-if (NOT Boost_FOUND)
-    message("Boost Not Foound")
-    return()
-endif()
+configure_file (
+  "${PROJECT_SOURCE_DIR}/config.h.in"
+  "${PROJECT_SOURCE_DIR}/include/config.h"
+)
 
-include_directories(${Boost_INCLUDE_DIRS})
-link_directories(${Boost_LIBRARY_DIRS})
- 
+option (JSON_USE_PARSER_SPIRIT  "use parser spirit" ON)
+
+if (JSON_USE_PARSER_SPIRIT)
+    find_package(Boost REQUIRED)
+    if (NOT Boost_FOUND)
+        message("Boost Not Foound")
+        return()
+    endif()
+
+    include_directories(${Boost_INCLUDE_DIRS})
+    link_directories(${Boost_LIBRARY_DIRS})
+endif() 
 
 include_directories(include)
 

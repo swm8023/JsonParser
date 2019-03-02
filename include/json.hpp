@@ -1,10 +1,10 @@
 #ifndef _JSON_JSON_HPP
 #define _JSON_JSON_HPP
 
-#define JSON_USE_PARSER_SPIRIT
 
 #include <fstream>
 
+#include "config.h"
 #include "value.hpp"
 
 #ifdef JSON_USE_PARSER_SPIRIT
